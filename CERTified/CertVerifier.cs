@@ -16,27 +16,39 @@ namespace CERTified
     /// </summary>
     public class CertVerifier
     {
-        private string[] _winCTL = { @"http://ctldl.windowsupdate.com/msdownload/update/v3/static/trustedr/en/authrootstl.cab" };
-        private string[] _3pcrls =
-        {
-            @"http://crl.usertrust.com/UTN-USERFirst-Object.crl",
-            @"http://crl.securetrust.com/STCA.crl",
-            @"http://www.certplus.com/CRL/class2.crl",
-            @"http://cert.startcom.org/sfsca-crl.crl",
-            @"http://www.startssl.com/sfsca-crl.crl",
-            @"http://crl.verisign.com/pca3.crl"
-        };
-        private List<string> _ctls = new List<string>();
-        private List<X509Crl> _crls = new List<X509Crl>();
-        private List<string> _octetstrings = new List<string>();
+        private readonly string[] _winCTL = { @"http://ctldl.windowsupdate.com/msdownload/update/v3/static/trustedr/en/authrootstl.cab" };
+        private string[] _3pcrls;
+        private readonly List<string> _ctls = new List<string>();
+        private readonly HashSet<X509Crl> _crls = new HashSet<X509Crl>();
+        private readonly List<string> _octetstrings = new List<string>();
 
         /// <summary>
         /// Constructor for Cerificate Verifier. Begins download and parsing of CTL and CRL
         /// </summary>
         public CertVerifier()
         {
-            getWinCTL();
-            getCRLs();
+            GetWinCTL();
+        }
+
+        /// <summary>
+        /// Constructor for Cerificate Verifier. Begins download and parsing of CTL and CRL
+        /// </summary>
+        /// <param name="crls">3d party CRL lists from system certificates</param>
+        public CertVerifier(string[] crls)
+        {
+            _3pcrls = crls;
+            GetWinCTL();
+            GetCRLs();
+        }
+
+        /// <summary>
+        /// Updates the 3d party certificate revocation list
+        /// </summary>
+        /// <param name="newcrls">updated crl</param>
+        public void UpdateCRL(string[] newcrls)
+        {
+            _3pcrls = newcrls;
+            GetCRLs();
         }
 
         /// <summary>
@@ -44,7 +56,7 @@ namespace CERTified
         /// </summary>
         /// <param name="thumbprint">Certificate thumbprint</param>
         /// <returns>If thumbprint is in Certificate Trust List</returns>
-        public bool onCTL(string thumbprint)
+        public bool OnCTL(string thumbprint)
         {
             bool result = false;
             foreach (var c in _ctls)
@@ -63,7 +75,7 @@ namespace CERTified
         /// </summary>
         /// <param name="cert">X509Certificate structure</param>
         /// <returns>If thumbprint is in Certificate Revokation List</returns>
-        public bool onCRL(X509Certificate cert)
+        public bool OnCRL(X509Certificate cert)
         {
             bool result = false;
             foreach (var x in _crls)
@@ -82,7 +94,7 @@ namespace CERTified
         /// </summary>
         /// <param name="serial">Certificate serial number</param>
         /// <returns>If serial number is in Certificate Revocation List</returns>
-        public bool onCRL(string serial)
+        public bool OnCRL(string serial)
         {
             bool result = false;
             foreach (var x in _crls)
@@ -112,30 +124,31 @@ namespace CERTified
         /// <summary>
         /// Download, unpack, and parse MS Certificate Trust List
         /// </summary>
-        public void getWinCTL()
+        public void GetWinCTL()
         {
             _ctls.Clear();
             foreach (string url in _winCTL)
             {
-                byte[] data = webDownload(url);
-                unpackCAB(data);
+                byte[] data = WebDownload(url);
+                UnpackCAB(data);
             }
         }
 
         /// <summary>
         /// Download and parse Certificate Revocation List
         /// </summary>
-        public void getCRLs()
+        public void GetCRLs()
         {
             _crls.Clear();
             foreach (string url in _3pcrls)
             {
-                byte[] data = webDownload(url);
-                _crls.Add(buildCRL(data));
+                byte[] data = WebDownload(url);
+                if (data != null)
+                    _crls.Add(BuildCRL(data));
             }
         }
 
-        private X509Crl buildCRL(byte[] data)
+        private X509Crl BuildCRL(byte[] data)
         {
             X509Crl crls = null;
             try
@@ -143,29 +156,33 @@ namespace CERTified
                 X509CrlParser crlp = new X509CrlParser();
                 crls = crlp.ReadCrl(data);
             }
-            catch (Exception e) { Console.WriteLine("Eror: Could not parse CRL. {0}", e.Message); }
+            catch (Exception e) { Console.WriteLine(@"Eror: Could not parse CRL. {0}", e.Message); }
             return crls;
         }
 
-        private void unpackCAB(byte[] data)
+        private void UnpackCAB(byte[] data)
         {
-            CabEngine engine = new CabEngine();
-            Stream s = new MemoryStream(data);
-            foreach (var archiveFileInfo in engine.GetFiles(s))
+            try
             {
-                try
+                CabEngine engine = new CabEngine();
+                Stream s = new MemoryStream(data);
+                foreach (var archiveFileInfo in engine.GetFiles(s))
                 {
-                    Stream stream = engine.Unpack(s, archiveFileInfo);
-                    byte[] buffer = new byte[stream.Length];
-                    stream.Read(buffer, 0, (int)stream.Length);
-                    decodeASN1(buffer);
-                    parseHashes();
+                    try
+                    {
+                        Stream stream = engine.Unpack(s, archiveFileInfo);
+                        byte[] buffer = new byte[stream.Length];
+                        stream.Read(buffer, 0, (int)stream.Length);
+                        DecodeASN1(buffer);
+                        ParseHashes();
+                    }
+                    catch (Exception e) { Console.WriteLine(@"Error: Could not parse CTL. {0}", e.Message); }
                 }
-                catch (Exception e) { Console.WriteLine("Error: Could not parse CTL. {0}", e.Message); }
             }
+            catch (Exception e) { Console.WriteLine(@"Error: {0}", e.Message); }
         }
 
-        private void decodeASN1(byte[] data)
+        private void DecodeASN1(byte[] data)
         {
             Asn1InputStream input = new Asn1InputStream(data);
             Asn1Sequence seq = (Asn1Sequence)input.ReadObject();
@@ -173,35 +190,35 @@ namespace CERTified
             {
                 if (s.GetType() == typeof(DerTaggedObject))
                 {
-                    decodeASN1((DerTaggedObject)s);
+                    DecodeASN1((DerTaggedObject)s);
                 }
             }
         }
 
-        private void decodeASN1(DerTaggedObject dto)
+        private void DecodeASN1(DerTaggedObject dto)
         {            
             Asn1Sequence seq = (Asn1Sequence)dto.GetObject();
             foreach (var s in seq)
             {
                 if (s.GetType() == typeof(DerSequence))
                 {
-                    decodeASN1((DerSequence)s);
+                    DecodeASN1((DerSequence)s);
                 }
             }
         }
 
-        private void decodeASN1(DerSequence dseq)
+        private void DecodeASN1(DerSequence dseq)
         {
             Asn1Sequence seq = (Asn1Sequence)dseq;
             foreach (var s in seq)
             {
                 if (s.GetType() == typeof(Org.BouncyCastle.Asn1.DerSequence))
                 {
-                    decodeASN1((DerSequence)s);
+                    DecodeASN1((DerSequence)s);
                 }
                 if (s.GetType() == typeof(DerTaggedObject))
                 {
-                    decodeASN1((DerTaggedObject)s);
+                    DecodeASN1((DerTaggedObject)s);
                 }
                 if (s.GetType() == typeof(DerOctetString))
                 {
@@ -210,7 +227,7 @@ namespace CERTified
             }
         }
 
-        private void parseHashes()
+        private void ParseHashes()
         {
             foreach (var o in _octetstrings)
             {
@@ -218,7 +235,7 @@ namespace CERTified
             }
         }
 
-        private byte[] webDownload(string URL)
+        private byte[] WebDownload(string URL)
         {
             byte[] data = null;
             try
@@ -226,7 +243,7 @@ namespace CERTified
                 WebClient client = new WebClient();
                 data = client.DownloadData(URL);
             }
-            catch (Exception e) { Console.WriteLine("Error: Could not download {0}. {1}", URL, e.Message); }
+            catch (Exception e) { Console.WriteLine(@"Error: Could not download {0}. {1}", URL, e.Message); }
             return data;
         }
     }

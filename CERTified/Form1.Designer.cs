@@ -1,6 +1,6 @@
 ﻿namespace CERTified
 {
-    partial class Form1
+    partial class Form
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.operationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forceCheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,7 +37,7 @@
             this.resetFiltersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.certDataGridView = new System.Windows.Forms.DataGridView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.timerStatus1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerStatus2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -48,12 +48,15 @@
             this.crlCB = new System.Windows.Forms.CheckBox();
             this.invalidCB = new System.Windows.Forms.CheckBox();
             this.expiredCB = new System.Windows.Forms.CheckBox();
-            this.mismatchCB = new System.Windows.Forms.CheckBox();
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.certdetailsTreeView = new System.Windows.Forms.TreeView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.nofifyContextMenu = new System.Windows.Forms.ContextMenu();
+            this.newCertLabel = new System.Windows.Forms.Label();
+            this.certAuthLabel = new System.Windows.Forms.Label();
+            this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -83,48 +86,52 @@
             // forceCheckToolStripMenuItem
             // 
             this.forceCheckToolStripMenuItem.Name = "forceCheckToolStripMenuItem";
-            this.forceCheckToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.forceCheckToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.forceCheckToolStripMenuItem.Text = "Force Check";
             this.forceCheckToolStripMenuItem.Click += new System.EventHandler(this.forceCheckToolStripMenuItem_Click);
             // 
             // forceUpdateToolStripMenuItem
             // 
             this.forceUpdateToolStripMenuItem.Name = "forceUpdateToolStripMenuItem";
-            this.forceUpdateToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.forceUpdateToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.forceUpdateToolStripMenuItem.Text = "Force Update";
             this.forceUpdateToolStripMenuItem.Click += new System.EventHandler(this.forceUpdateToolStripMenuItem_Click);
             // 
             // resetFiltersToolStripMenuItem
             // 
             this.resetFiltersToolStripMenuItem.Name = "resetFiltersToolStripMenuItem";
-            this.resetFiltersToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.resetFiltersToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.resetFiltersToolStripMenuItem.Text = "Reset Filters";
             this.resetFiltersToolStripMenuItem.Click += new System.EventHandler(this.resetFiltersToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(164, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.exitToolStripMenuItem.Text = "Close Application";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // dataGridView1
+            // certDataGridView
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 27);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersWidth = 42;
-            this.dataGridView1.Size = new System.Drawing.Size(699, 400);
-            this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            this.certDataGridView.AllowUserToAddRows = false;
+            this.certDataGridView.AllowUserToDeleteRows = false;
+            this.certDataGridView.AllowUserToResizeRows = false;
+            this.certDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.certDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.certDataGridView.Location = new System.Drawing.Point(0, 27);
+            this.certDataGridView.Name = "certDataGridView";
+            this.certDataGridView.ReadOnly = true;
+            this.certDataGridView.RowHeadersWidth = 42;
+            this.certDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.certDataGridView.Size = new System.Drawing.Size(699, 400);
+            this.certDataGridView.TabIndex = 1;
+            this.certDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            this.certDataGridView.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.certDataGridView_RowsAdded);
             // 
             // statusStrip1
             // 
@@ -141,14 +148,12 @@
             // timerStatus1
             // 
             this.timerStatus1.Name = "timerStatus1";
-            this.timerStatus1.Size = new System.Drawing.Size(73, 17);
-            this.timerStatus1.Text = "timerStatus1";
+            this.timerStatus1.Size = new System.Drawing.Size(0, 17);
             // 
             // timerStatus2
             // 
             this.timerStatus2.Name = "timerStatus2";
-            this.timerStatus2.Size = new System.Drawing.Size(73, 17);
-            this.timerStatus2.Text = "timerStatus2";
+            this.timerStatus2.Size = new System.Drawing.Size(0, 17);
             // 
             // formStatus
             // 
@@ -157,13 +162,11 @@
             // 
             // timer1
             // 
-            this.timer1.Enabled = true;
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // timer2
             // 
-            this.timer2.Enabled = true;
             this.timer2.Interval = 1000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
@@ -176,7 +179,7 @@
             this.ctlCB.TabIndex = 3;
             this.ctlCB.Text = "CTL";
             this.ctlCB.UseVisualStyleBackColor = true;
-            this.ctlCB.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.ctlCB.CheckedChanged += new System.EventHandler(this.ctl_CheckedChanged);
             // 
             // crlCB
             // 
@@ -187,7 +190,7 @@
             this.crlCB.TabIndex = 4;
             this.crlCB.Text = "CRL";
             this.crlCB.UseVisualStyleBackColor = true;
-            this.crlCB.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.crlCB.CheckedChanged += new System.EventHandler(this.crl_CheckedChanged);
             // 
             // invalidCB
             // 
@@ -198,7 +201,7 @@
             this.invalidCB.TabIndex = 5;
             this.invalidCB.Text = "Invalid";
             this.invalidCB.UseVisualStyleBackColor = true;
-            this.invalidCB.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            this.invalidCB.CheckedChanged += new System.EventHandler(this.invalid_CheckedChanged);
             // 
             // expiredCB
             // 
@@ -209,52 +212,73 @@
             this.expiredCB.TabIndex = 6;
             this.expiredCB.Text = "Expired";
             this.expiredCB.UseVisualStyleBackColor = true;
-            this.expiredCB.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.expiredCB.CheckedChanged += new System.EventHandler(this.expired_CheckedChanged);
             // 
-            // mismatchCB
+            // certdetailsTreeView
             // 
-            this.mismatchCB.AutoSize = true;
-            this.mismatchCB.Location = new System.Drawing.Point(361, 434);
-            this.mismatchCB.Name = "mismatchCB";
-            this.mismatchCB.Size = new System.Drawing.Size(71, 17);
-            this.mismatchCB.TabIndex = 7;
-            this.mismatchCB.Text = "Mismatch";
-            this.mismatchCB.UseVisualStyleBackColor = true;
-            this.mismatchCB.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
+            this.certdetailsTreeView.Location = new System.Drawing.Point(705, 27);
+            this.certdetailsTreeView.Name = "certdetailsTreeView";
+            this.certdetailsTreeView.Size = new System.Drawing.Size(383, 400);
+            this.certdetailsTreeView.TabIndex = 8;
             // 
-            // treeView1
+            // notifyIcon1
             // 
-            this.treeView1.Location = new System.Drawing.Point(705, 27);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(383, 400);
-            this.treeView1.TabIndex = 8;
+            this.notifyIcon1.ContextMenu = this.nofifyContextMenu;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
+            // 
+            // newCertLabel
+            // 
+            this.newCertLabel.AutoSize = true;
+            this.newCertLabel.ForeColor = System.Drawing.Color.DarkRed;
+            this.newCertLabel.Location = new System.Drawing.Point(620, 435);
+            this.newCertLabel.Name = "newCertLabel";
+            this.newCertLabel.Size = new System.Drawing.Size(79, 13);
+            this.newCertLabel.TabIndex = 9;
+            this.newCertLabel.Text = "New Certificate";
+            // 
+            // certAuthLabel
+            // 
+            this.certAuthLabel.AutoSize = true;
+            this.certAuthLabel.ForeColor = System.Drawing.Color.Blue;
+            this.certAuthLabel.Location = new System.Drawing.Point(516, 435);
+            this.certAuthLabel.Name = "certAuthLabel";
+            this.certAuthLabel.Size = new System.Drawing.Size(98, 13);
+            this.certAuthLabel.TabIndex = 10;
+            this.certAuthLabel.Text = "Certificate Authority";
             // 
             // certstructBindingSource
             // 
-            this.certstructBindingSource.DataSource = typeof(CERTified.certstruct);
+            this.certstructBindingSource.DataSource = typeof(CERTified.CertStruct);
             // 
-            // Form1
+            // Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1089, 481);
-            this.Controls.Add(this.treeView1);
-            this.Controls.Add(this.mismatchCB);
+            this.Controls.Add(this.certAuthLabel);
+            this.Controls.Add(this.newCertLabel);
+            this.Controls.Add(this.certdetailsTreeView);
             this.Controls.Add(this.expiredCB);
             this.Controls.Add(this.invalidCB);
             this.Controls.Add(this.crlCB);
             this.Controls.Add(this.ctlCB);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.certDataGridView);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "Form";
             this.Text = "CERTified";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).EndInit();
@@ -270,7 +294,7 @@
         private System.Windows.Forms.ToolStripMenuItem forceCheckToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem forceUpdateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView certDataGridView;
         private System.Windows.Forms.BindingSource certstructBindingSource;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel timerStatus1;
@@ -282,11 +306,14 @@
         private System.Windows.Forms.CheckBox crlCB;
         private System.Windows.Forms.CheckBox invalidCB;
         private System.Windows.Forms.CheckBox expiredCB;
-        private System.Windows.Forms.CheckBox mismatchCB;
         private System.Windows.Forms.ToolStripStatusLabel formStatus;
         private System.Windows.Forms.ToolStripMenuItem resetFiltersToolStripMenuItem;
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView certdetailsTreeView;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.ContextMenu nofifyContextMenu;
+        private System.Windows.Forms.Label newCertLabel;
+        private System.Windows.Forms.Label certAuthLabel;
     }
 }
 

@@ -99,20 +99,27 @@ namespace CERTified
                 UpdateView();
                 Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
                 Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
+                Invoke(new MethodInvoker(delegate { timer1.Start(); }));
             });
             t.Start();
-            timer1.Start();
+            
         }
 
         private void forceUpdateToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            formStatus.Text = @" Updating CTL and CRL list...";
             timer2.Stop();
-            _scc.GetCertVerifier().GetWinCTL();
-            _scc.GetCertVerifier().GetCRLs();
-            _usetimer2 = _settimer2;
-            timer2.Start();
-            formStatus.Text = "";
+            Thread t = new Thread(() =>
+            {
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL and CRL list..."; }));
+                _scc.GetCertVerifier().GetWinCTL();
+                _scc.GetCertVerifier().GetCRLs();
+                _usetimer2 = _settimer2;
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
+                Invoke(new MethodInvoker(delegate { timer1.Start(); }));
+            });
+            t.Start();
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
@@ -164,6 +171,7 @@ namespace CERTified
 
         private void exitToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
+            notifyIcon1.Visible = false;
             Environment.Exit(0);
         }
 

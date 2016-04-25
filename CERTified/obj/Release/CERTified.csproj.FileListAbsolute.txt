@@ -1,14 +1,3 @@
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\CERTified.exe.config
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\CERTified.exe
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\CERTified.pdb
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\BouncyCastle.Crypto.dll
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\BouncyCastle.Crypto.pdb
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.csprojResolveAssemblyReference.cache
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.Properties.Resources.resources
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.csproj.GenerateResource.Cache
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.exe
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.pdb
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.Form.resources
 C:\Users\William\Documents\GitHub\CERTified\CERTified\bin\Release\CERTified.exe.config
 C:\Users\William\Documents\GitHub\CERTified\CERTified\bin\Release\CERTified.exe
 C:\Users\William\Documents\GitHub\CERTified\CERTified\bin\Release\CERTified.pdb

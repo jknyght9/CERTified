@@ -240,6 +240,7 @@ namespace CERTified
             byte[] data = null;
             try
             {
+                // bad CRL URL for StartCom Certification Authority in Trusted Root Certificate Auths.
                 if (!URL.Equals("http://crl.startcom.org/sfsca-crl.crl"))
                 {
                     WebClient client = new WebClient();

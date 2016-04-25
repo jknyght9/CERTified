@@ -343,8 +343,7 @@ namespace CERTified
             notifyIcon1.BalloonTipTitle = @"CERTified";
             notifyIcon1.BalloonTipText = @"A change in the certificate store has been detected";
             notifyIcon1.ShowBalloonTip(1000);
-            if (!this.Visible)
-                Show();
+            notifyIcon1.BalloonTipClicked += notifyIcon1_Click;
         }
 
         private void notifyIcon1_Click(object sender, EventArgs e)

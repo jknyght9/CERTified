@@ -54,6 +54,8 @@
             this.nofifyContextMenu = new System.Windows.Forms.ContextMenu();
             this.newCertLabel = new System.Windows.Forms.Label();
             this.certAuthLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
@@ -173,7 +175,7 @@
             // ctlCB
             // 
             this.ctlCB.AutoSize = true;
-            this.ctlCB.Location = new System.Drawing.Point(13, 434);
+            this.ctlCB.Location = new System.Drawing.Point(55, 436);
             this.ctlCB.Name = "ctlCB";
             this.ctlCB.Size = new System.Drawing.Size(46, 17);
             this.ctlCB.TabIndex = 3;
@@ -184,7 +186,7 @@
             // crlCB
             // 
             this.crlCB.AutoSize = true;
-            this.crlCB.Location = new System.Drawing.Point(100, 434);
+            this.crlCB.Location = new System.Drawing.Point(107, 436);
             this.crlCB.Name = "crlCB";
             this.crlCB.Size = new System.Drawing.Size(47, 17);
             this.crlCB.TabIndex = 4;
@@ -195,7 +197,7 @@
             // invalidCB
             // 
             this.invalidCB.AutoSize = true;
-            this.invalidCB.Location = new System.Drawing.Point(187, 434);
+            this.invalidCB.Location = new System.Drawing.Point(160, 436);
             this.invalidCB.Name = "invalidCB";
             this.invalidCB.Size = new System.Drawing.Size(57, 17);
             this.invalidCB.TabIndex = 5;
@@ -206,7 +208,7 @@
             // expiredCB
             // 
             this.expiredCB.AutoSize = true;
-            this.expiredCB.Location = new System.Drawing.Point(274, 434);
+            this.expiredCB.Location = new System.Drawing.Point(223, 436);
             this.expiredCB.Name = "expiredCB";
             this.expiredCB.Size = new System.Drawing.Size(61, 17);
             this.expiredCB.TabIndex = 6;
@@ -249,6 +251,24 @@
             this.certAuthLabel.TabIndex = 10;
             this.certAuthLabel.Text = "Certificate Authority";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 436);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(37, 13);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Filters:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(702, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(42, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "History:";
+            // 
             // certstructBindingSource
             // 
             this.certstructBindingSource.DataSource = typeof(CERTified.CertStruct);
@@ -258,6 +278,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1089, 481);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.certAuthLabel);
             this.Controls.Add(this.newCertLabel);
             this.Controls.Add(this.certdetailsTreeView);
@@ -314,6 +336,8 @@
         private System.Windows.Forms.ContextMenu nofifyContextMenu;
         private System.Windows.Forms.Label newCertLabel;
         private System.Windows.Forms.Label certAuthLabel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 

@@ -10,7 +10,6 @@ namespace CERTified
     public partial class Form : System.Windows.Forms.Form
     {
         private SystemCertCheck _scc;
-        private readonly int _settimer1 = 60;        //for system check (1 minute)
         private readonly int _settimer2 = 21600;     //for CTL / CRL update (6 hours)
         private int _usetimer1 = 0;
         private int _usetimer2 = 0;
@@ -20,7 +19,7 @@ namespace CERTified
         public Form()
         {
             InitializeComponent();
-            _usetimer1 = _settimer1;
+            _usetimer1 = Convert.ToInt32(numericUpDown1.Value);
             _usetimer2 = _settimer2;
             Thread t = new Thread(() =>
             {
@@ -140,7 +139,7 @@ namespace CERTified
                     Invoke(new MethodInvoker(delegate { formStatus.Text = ""; }));
                 });
                 t.Start();
-                _usetimer1 = _settimer1;
+                _usetimer1 = Convert.ToInt32(numericUpDown1.Value);
                 timer1.Start();
             }
         }
@@ -364,6 +363,14 @@ namespace CERTified
         {
             e.Cancel = true;
             Hide();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+
+            int time = Convert.ToInt32(numericUpDown1.Value);
+            _usetimer1 = time;
+            timer1.Start();
         }
     }
 }

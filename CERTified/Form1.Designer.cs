@@ -57,12 +57,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.refreshRateUpDown = new System.Windows.Forms.NumericUpDown();
             this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.refreshRateUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -275,34 +275,34 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(415, 6);
+            this.label3.Location = new System.Drawing.Point(440, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(130, 13);
             this.label3.TabIndex = 14;
             this.label3.Text = "Refresh Rate (in seconds)";
             // 
-            // numericUpDown1
+            // refreshRateUpDown
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(551, 4);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.refreshRateUpDown.Location = new System.Drawing.Point(576, 4);
+            this.refreshRateUpDown.Maximum = new decimal(new int[] {
             100000,
             0,
             0,
             0});
-            this.numericUpDown1.Minimum = new decimal(new int[] {
+            this.refreshRateUpDown.Minimum = new decimal(new int[] {
             5,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDown1.TabIndex = 15;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.refreshRateUpDown.Name = "refreshRateUpDown";
+            this.refreshRateUpDown.Size = new System.Drawing.Size(120, 20);
+            this.refreshRateUpDown.TabIndex = 15;
+            this.refreshRateUpDown.Value = new decimal(new int[] {
             60,
             0,
             0,
             0});
-            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            this.refreshRateUpDown.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
             // certstructBindingSource
             // 
@@ -313,7 +313,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1089, 481);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.refreshRateUpDown);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -340,7 +340,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.refreshRateUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -377,7 +377,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown refreshRateUpDown;
     }
 }
 

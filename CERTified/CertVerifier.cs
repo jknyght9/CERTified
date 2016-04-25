@@ -17,7 +17,7 @@ namespace CERTified
     public class CertVerifier
     {
         private readonly string[] _winCTL = { @"http://ctldl.windowsupdate.com/msdownload/update/v3/static/trustedr/en/authrootstl.cab" };
-        private string[] _3pcrls;
+        private string[] _3Pcrls;
         private readonly List<string> _ctls = new List<string>();
         private readonly HashSet<X509Crl> _crls = new HashSet<X509Crl>();
         private readonly List<string> _octetstrings = new List<string>();
@@ -36,19 +36,19 @@ namespace CERTified
         /// <param name="crls">3d party CRL lists from system certificates</param>
         public CertVerifier(string[] crls)
         {
-            _3pcrls = crls;
+            _3Pcrls = crls;
             GetWinCTL();
-            GetCRLs();
+            GetCrLs();
         }
 
         /// <summary>
         /// Updates the 3d party certificate revocation list
         /// </summary>
         /// <param name="newcrls">updated crl</param>
-        public void UpdateCRL(string[] newcrls)
+        public void UpdateCrl(string[] newcrls)
         {
-            _3pcrls = newcrls;
-            GetCRLs();
+            _3Pcrls = newcrls;
+            GetCrLs();
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace CERTified
         /// </summary>
         /// <param name="cert">X509Certificate structure</param>
         /// <returns>If thumbprint is in Certificate Revokation List</returns>
-        public bool OnCRL(X509Certificate cert)
+        public bool OnCrl(X509Certificate cert)
         {
             bool result = false;
             foreach (var x in _crls)
@@ -94,7 +94,7 @@ namespace CERTified
         /// </summary>
         /// <param name="serial">Certificate serial number</param>
         /// <returns>If serial number is in Certificate Revocation List</returns>
-        public bool OnCRL(string serial)
+        public bool OnCrl(string serial)
         {
             bool result = false;
             foreach (var x in _crls)
@@ -109,7 +109,7 @@ namespace CERTified
                     foreach (var r in revoked)
                     {
                         CrlEntry crle = (CrlEntry)r;
-                        if (BigInteger.Equals(biserial, crle.UserCertificate.Value))
+                        if (Equals(biserial, crle.UserCertificate.Value))
                         {
                             result = true;
                             break;
@@ -130,25 +130,25 @@ namespace CERTified
             foreach (string url in _winCTL)
             {
                 byte[] data = WebDownload(url);
-                UnpackCAB(data);
+                UnpackCab(data);
             }
         }
 
         /// <summary>
         /// Download and parse Certificate Revocation List
         /// </summary>
-        public void GetCRLs()
+        public void GetCrLs()
         {
             _crls.Clear();
-            foreach (string url in _3pcrls)
+            foreach (string url in _3Pcrls)
             {
                 byte[] data = WebDownload(url);
                 if (data != null)
-                    _crls.Add(BuildCRL(data));
+                    _crls.Add(BuildCrl(data));
             }
         }
 
-        private X509Crl BuildCRL(byte[] data)
+        private X509Crl BuildCrl(byte[] data)
         {
             X509Crl crls = null;
             try
@@ -160,7 +160,7 @@ namespace CERTified
             return crls;
         }
 
-        private void UnpackCAB(byte[] data)
+        private void UnpackCab(byte[] data)
         {
             try
             {
@@ -173,7 +173,7 @@ namespace CERTified
                         Stream stream = engine.Unpack(s, archiveFileInfo);
                         byte[] buffer = new byte[stream.Length];
                         stream.Read(buffer, 0, (int)stream.Length);
-                        DecodeASN1(buffer);
+                        DecodeAsn1(buffer);
                         ParseHashes();
                     }
                     catch (Exception e) { Console.WriteLine(@"Error: Could not parse CTL. {0}", e.Message); }
@@ -182,7 +182,7 @@ namespace CERTified
             catch (Exception e) { Console.WriteLine(@"Error: {0}", e.Message); }
         }
 
-        private void DecodeASN1(byte[] data)
+        private void DecodeAsn1(byte[] data)
         {
             Asn1InputStream input = new Asn1InputStream(data);
             Asn1Sequence seq = (Asn1Sequence)input.ReadObject();
@@ -190,35 +190,35 @@ namespace CERTified
             {
                 if (s.GetType() == typeof(DerTaggedObject))
                 {
-                    DecodeASN1((DerTaggedObject)s);
+                    DecodeAsn1((DerTaggedObject)s);
                 }
             }
         }
 
-        private void DecodeASN1(DerTaggedObject dto)
+        private void DecodeAsn1(DerTaggedObject dto)
         {            
             Asn1Sequence seq = (Asn1Sequence)dto.GetObject();
             foreach (var s in seq)
             {
                 if (s.GetType() == typeof(DerSequence))
                 {
-                    DecodeASN1((DerSequence)s);
+                    DecodeAsn1((DerSequence)s);
                 }
             }
         }
 
-        private void DecodeASN1(DerSequence dseq)
+        private void DecodeAsn1(DerSequence dseq)
         {
-            Asn1Sequence seq = (Asn1Sequence)dseq;
+            Asn1Sequence seq = dseq;
             foreach (var s in seq)
             {
-                if (s.GetType() == typeof(Org.BouncyCastle.Asn1.DerSequence))
+                if (s.GetType() == typeof(DerSequence))
                 {
-                    DecodeASN1((DerSequence)s);
+                    DecodeAsn1((DerSequence)s);
                 }
                 if (s.GetType() == typeof(DerTaggedObject))
                 {
-                    DecodeASN1((DerTaggedObject)s);
+                    DecodeAsn1((DerTaggedObject)s);
                 }
                 if (s.GetType() == typeof(DerOctetString))
                 {
@@ -235,19 +235,19 @@ namespace CERTified
             }
         }
 
-        private byte[] WebDownload(string URL)
+        private byte[] WebDownload(string url)
         {
             byte[] data = null;
             try
             {
                 // bad CRL URL for StartCom Certification Authority in Trusted Root Certificate Auths.
-                if (!URL.Equals("http://crl.startcom.org/sfsca-crl.crl"))
+                if (!url.Equals("http://crl.startcom.org/sfsca-crl.crl"))
                 {
                     WebClient client = new WebClient();
-                    data = client.DownloadData(URL);
+                    data = client.DownloadData(url);
                 }
             }
-            catch (Exception e) { Console.WriteLine(@"Error: Could not download {0}. {1}", URL, e.Message); }
+            catch (Exception e) { Console.WriteLine(@"Error: Could not download {0}. {1}", url, e.Message); }
             return data;
         }
     }

@@ -62,7 +62,7 @@ namespace CERTified
         /// </summary>
         public SystemCertCheck()
         {
-            _sc = new CertVerifier(GetCRLs());
+            _sc = new CertVerifier(GetCrLs());
         }
 
         /// <summary>
@@ -83,28 +83,28 @@ namespace CERTified
             List<CertStruct> newCollection = new List<CertStruct>(VerifyCAs());
             foreach (var vc in VerifyCerts())
             {
-                var found = newCollection.Where(a => a.thumbprint == vc.thumbprint);
+                var found = newCollection.Where(a => a.Thumbprint == vc.Thumbprint);
                 if (!found.Any())
                     newCollection.Add(vc);
             }
             if (changed)
-                return new ChangedStruct() { ischanged = changed, certs = newCollection };
+                return new ChangedStruct() { Ischanged = changed, Certs = newCollection };
             if (!collection.Any())
                 changed = true;
             else
             {
                 List<CertStruct> modifiedCollection = new List<CertStruct>();
-                _sc.UpdateCRL(GetCRLs());
+                _sc.UpdateCrl(GetCrLs());
                 ChangedStruct verified = VerifyAllCerts(newCollection, true);
-                modifiedCollection.AddRange(verified.certs);
+                modifiedCollection.AddRange(verified.Certs);
                 foreach (var ac in newCollection)
                 {
-                    var found = collection.FirstOrDefault(a => a.thumbprint == ac.thumbprint);
-                    if (String.IsNullOrEmpty(found.thumbprint))
+                    var found = collection.FirstOrDefault(a => a.Thumbprint == ac.Thumbprint);
+                    if (String.IsNullOrEmpty(found.Thumbprint))
                     {
-                        int idx = modifiedCollection.IndexOf(modifiedCollection.FirstOrDefault(a => a.thumbprint == ac.thumbprint));
+                        int idx = modifiedCollection.IndexOf(modifiedCollection.FirstOrDefault(a => a.Thumbprint == ac.Thumbprint));
                         CertStruct moditem = modifiedCollection.ElementAt(idx);
-                        moditem.isNew = true;
+                        moditem.IsNew = true;
                         modifiedCollection.RemoveAt(idx);
                         modifiedCollection.Insert(0, moditem);
                         changed = true;
@@ -112,10 +112,10 @@ namespace CERTified
                 }
                 newCollection = modifiedCollection;
             }
-            return new ChangedStruct() { ischanged = changed, certs = newCollection };
+            return new ChangedStruct() { Ischanged = changed, Certs = newCollection };
         }
 
-        private string[] GetCRLs()
+        private string[] GetCrLs()
         {
             HashSet<string> crls = new HashSet<string>();
             foreach (var loc in _storeLocations)
@@ -126,7 +126,7 @@ namespace CERTified
                     {
                         X509Store x509Store = new X509Store(store, loc);
                         x509Store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
-                        X509CertificateCollection collection = (X509CertificateCollection)x509Store.Certificates;
+                        X509CertificateCollection collection = (X509CertificateCollection) x509Store.Certificates;
                         foreach (X509Certificate2 certificate in collection)
                         {
                             X509ExtensionCollection extcol = certificate.Extensions;
@@ -134,7 +134,8 @@ namespace CERTified
                             {
                                 if (ext.Oid.FriendlyName == "CRL Distribution Points")
                                 {
-                                    Regex linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                                    Regex linkParser = new Regex(@"\b(?:https?://|www\.)\S+\b",
+                                        RegexOptions.Compiled | RegexOptions.IgnoreCase);
                                     byte[] test = ext.RawData;
                                     int idxone = test[9];
                                     string crlstr = (Encoding.ASCII.GetString(ext.RawData));
@@ -151,7 +152,10 @@ namespace CERTified
                             }
                         }
                     }
-                    catch (Exception e) { ; }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
             }
             string[] crlset = new string[crls.Count];
@@ -161,7 +165,7 @@ namespace CERTified
 
         private HashSet<CertStruct> VerifyCAs()
         {
-            HashSet<CertStruct> CertStruct = new HashSet<CertStruct>();
+            HashSet<CertStruct> certStruct = new HashSet<CertStruct>();
             foreach (var loc in _storeLocations)
             {
                 foreach (var store in _caStores)
@@ -173,44 +177,44 @@ namespace CERTified
                         X509CertificateCollection collection = (X509CertificateCollection)x509Store.Certificates;
                         foreach (X509Certificate2 certificate in collection)
                         {
-                            var found = CertStruct.FirstOrDefault(a => a.thumbprint == certificate.Thumbprint);
-                            if (String.IsNullOrEmpty(found.thumbprint))
+                            var found = certStruct.FirstOrDefault(a => a.Thumbprint == certificate.Thumbprint);
+                            if (String.IsNullOrEmpty(found.Thumbprint))
                             {
                                 List<Status> stats = new List<Status>();
                                 if (!_sc.OnCTL(certificate.Thumbprint))
                                 {
-                                    stats.Add(Status.NOTCTL);
+                                    stats.Add(Status.Notctl);
                                 }
-                                if (_sc.OnCRL(certificate.SerialNumber))
+                                if (_sc.OnCrl(certificate.SerialNumber))
                                 {
-                                    stats.Add(Status.INCRL);
+                                    stats.Add(Status.Incrl);
                                 }
                                 if (!certificate.Verify())
                                 {
-                                    stats.Add(Status.INVALID);
+                                    stats.Add(Status.Invalid);
                                 }
                                 if ((certificate.NotAfter - DateTime.Now).TotalDays <= 0)
                                 {
-                                    stats.Add(Status.EXPIRED);
+                                    stats.Add(Status.Expired);
                                 }
                                 if (stats.Count > 0)
                                 {
                                     bool isLocalMachine = loc.ToString().Equals(StoreLocation.LocalMachine.ToString());
-                                    CertStruct.Add(new CertStruct()
+                                    certStruct.Add(new CertStruct()
                                     {
-                                        stat = stats,
-                                        storename = store.ToString(),
-                                        storeloc = loc.ToString(),
-                                        simplename = GetCN(certificate.Subject),
-                                        friendlyname = certificate.FriendlyName,
-                                        serial = certificate.SerialNumber,
-                                        subject = certificate.Subject,
-                                        thumbprint = certificate.Thumbprint,
-                                        algorithm = certificate.SignatureAlgorithm.FriendlyName,
-                                        expires = certificate.NotAfter,
-                                        isNew = false,
-                                        isCA = true,
-                                        isLocalMachine = isLocalMachine
+                                        Stat = stats,
+                                        Storename = store,
+                                        Storeloc = loc.ToString(),
+                                        Simplename = GetCn(certificate.Subject),
+                                        Friendlyname = certificate.FriendlyName,
+                                        Serial = certificate.SerialNumber,
+                                        Subject = certificate.Subject,
+                                        Thumbprint = certificate.Thumbprint,
+                                        Algorithm = certificate.SignatureAlgorithm.FriendlyName,
+                                        Expires = certificate.NotAfter,
+                                        IsNew = false,
+                                        IsCa = true,
+                                        IsLocalMachine = isLocalMachine
                                     });
                                 }
                                 certificate.Reset();
@@ -218,15 +222,15 @@ namespace CERTified
                         }
                         x509Store.Close();
                     }
-                    catch (Exception e) { Console.WriteLine("Error: {0}", e.Message); }
+                    catch (Exception e) { Console.WriteLine(@"Error: {0}", e.Message); }
                 }
             }
-            return CertStruct;
+            return certStruct;
         }
 
         private HashSet<CertStruct> VerifyCerts()
         {
-            HashSet<CertStruct> CertStruct = new HashSet<CertStruct>();
+            HashSet<CertStruct> certStruct = new HashSet<CertStruct>();
             foreach (var loc in _storeLocations)
             {
                 foreach (var store in _certStores)
@@ -235,53 +239,56 @@ namespace CERTified
                     {
                         X509Store x509Store = new X509Store(store, loc);
                         x509Store.Open(OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
-                        X509CertificateCollection collection = (X509CertificateCollection)x509Store.Certificates;
+                        X509CertificateCollection collection = (X509CertificateCollection) x509Store.Certificates;
                         foreach (X509Certificate2 certificate in collection)
                         {
                             List<Status> stats = new List<Status>();
-                            if (_sc.OnCRL(certificate.SerialNumber))
+                            if (_sc.OnCrl(certificate.SerialNumber))
                             {
-                                stats.Add(Status.INCRL);
+                                stats.Add(Status.Incrl);
                             }
                             if (!certificate.Verify())
                             {
-                                stats.Add(Status.INVALID);
+                                stats.Add(Status.Invalid);
                             }
                             if ((certificate.NotAfter - DateTime.Now).TotalDays <= 0)
                             {
-                                stats.Add(Status.EXPIRED);
+                                stats.Add(Status.Expired);
                             }
                             if (stats.Count > 0)
                             {
                                 bool isLocalMachine = loc.ToString().Equals(StoreLocation.LocalMachine.ToString());
-                                CertStruct.Add(new CertStruct()
+                                certStruct.Add(new CertStruct()
                                 {
-                                    stat = stats,
-                                    storename = store.ToString(),
-                                    storeloc = loc.ToString(),
-                                    simplename = GetCN(certificate.Subject),
-                                    friendlyname = certificate.FriendlyName,
-                                    serial = certificate.SerialNumber,
-                                    subject = certificate.Subject,
-                                    thumbprint = certificate.Thumbprint,
-                                    algorithm = certificate.SignatureAlgorithm.FriendlyName,
-                                    expires = certificate.NotAfter,
-                                    isNew = false,
-                                    isCA = false,
-                                    isLocalMachine = isLocalMachine
+                                    Stat = stats,
+                                    Storename = store,
+                                    Storeloc = loc.ToString(),
+                                    Simplename = GetCn(certificate.Subject),
+                                    Friendlyname = certificate.FriendlyName,
+                                    Serial = certificate.SerialNumber,
+                                    Subject = certificate.Subject,
+                                    Thumbprint = certificate.Thumbprint,
+                                    Algorithm = certificate.SignatureAlgorithm.FriendlyName,
+                                    Expires = certificate.NotAfter,
+                                    IsNew = false,
+                                    IsCa = false,
+                                    IsLocalMachine = isLocalMachine
                                 });
                             }
                             certificate.Reset();
                         }
                         x509Store.Close();
                     }
-                    catch (Exception e) { ; }             
+                    catch (Exception)
+                    {
+                        // ignored
+                    }             
                 }
             }
-            return CertStruct;
+            return certStruct;
         }
 
-        private string GetCN(string subject)
+        private string GetCn(string subject)
         {
             string cn = string.Empty;
             string[] result = subject.Split(',');

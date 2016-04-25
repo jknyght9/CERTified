@@ -11,15 +11,15 @@ namespace CERTified
     {
         private SystemCertCheck _scc;
         private readonly int _settimer2 = 21600;     //for CTL / CRL update (6 hours)
-        private int _usetimer1 = 0;
-        private int _usetimer2 = 0;
+        private int _usetimer1;
+        private int _usetimer2;
         private readonly List<string> _filter = new List<string>();
         private List<CertStruct> _certs = new List<CertStruct>();
 
         public Form()
         {
             InitializeComponent();
-            _usetimer1 = Convert.ToInt32(numericUpDown1.Value);
+            _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
             _usetimer2 = _settimer2;
             Thread t = new Thread(() =>
             {
@@ -56,8 +56,8 @@ namespace CERTified
             if (!isFiltered)
             {
                 ChangedStruct newCerts = _scc.VerifyAllCerts(_certs);
-                _certs = newCerts.certs;
-                if (newCerts.ischanged)
+                _certs = newCerts.Certs;
+                if (newCerts.Ischanged)
                     certs_CollectionChanged();
             }
             DataTable dt = new DataTable();
@@ -70,38 +70,39 @@ namespace CERTified
             foreach (var cert in _certs)
             {
                 string[] exes = new string[dt.Columns.Count];
-                foreach (var flag in cert.stat)
+                foreach (var flag in cert.Stat)
                 {
                     switch (flag)
                     {
-                        case Status.EXPIRED:
+                        case Status.Expired:
                             exes[3] = "X";
                             break;
-                        case Status.INCRL:
+                        case Status.Incrl:
                             exes[1] = "X";
                             break;
-                        case Status.INVALID:
+                        case Status.Invalid:
                             exes[2] = "X";
                             break;
-                        case Status.NOTCTL:
+                        case Status.Notctl:
                             exes[0] = "X";
                             break;
                     }
                 }
-                dt.Rows.Add((String.IsNullOrEmpty(cert.simplename)) ? cert.friendlyname : cert.simplename, exes[0], exes[1], exes[2], exes[3]);
+                dt.Rows.Add((String.IsNullOrEmpty(cert.Simplename)) ? cert.Friendlyname : cert.Simplename, exes[0], exes[1], exes[2], exes[3]);
             }
             return dt;
         }
 
-        private void forceCheckToolStripMenuItem_Click(object sender, System.EventArgs e)
+        private void forceCheckToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer1.Stop();
             Thread t = new Thread(() =>
             {
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Blue; }));
                 Invoke(new MethodInvoker(delegate { formStatus.Text =  @" Updating certificate information... "; }));
                 UpdateView();
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
                 Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
                 Invoke(new MethodInvoker(delegate { timer1.Start(); }));
             });
@@ -109,24 +110,24 @@ namespace CERTified
             
         }
 
-        private void forceUpdateToolStripMenuItem_Click(object sender, System.EventArgs e)
+        private void forceUpdateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer2.Stop();
             Thread t = new Thread(() =>
             {
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Blue; }));
                 Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL and CRL list..."; }));
                 _scc.GetCertVerifier().GetWinCTL();
-                _scc.GetCertVerifier().GetCRLs();
+                _scc.GetCertVerifier().GetCrLs();
                 _usetimer2 = _settimer2;
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
                 Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
-                Invoke(new MethodInvoker(delegate { timer1.Start(); }));
+                Invoke(new MethodInvoker(delegate { timer2.Start(); }));
             });
             t.Start();
         }
 
-        private void timer1_Tick(object sender, System.EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             if (_usetimer1 > 0)
             {
@@ -137,19 +138,19 @@ namespace CERTified
             {
                 Thread t = new Thread(() =>
                 {
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Blue; }));
                     Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating certificate information..."; }));
                     UpdateView();
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Black; }));
                     Invoke(new MethodInvoker(delegate { formStatus.Text = ""; }));
                 });
                 t.Start();
-                _usetimer1 = Convert.ToInt32(numericUpDown1.Value);
+                _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
                 timer1.Start();
             }
         }
 
-        private void timer2_Tick(object sender, System.EventArgs e)
+        private void timer2_Tick(object sender, EventArgs e)
         {
             if (_usetimer2 > 0)
             {
@@ -160,11 +161,11 @@ namespace CERTified
             {
                 Thread t = new Thread(() =>
                 {
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Blue; }));
                     Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL / CRL... "; }));
                     _scc.GetCertVerifier().GetWinCTL();
-                    _scc.GetCertVerifier().GetCRLs();
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                    _scc.GetCertVerifier().GetCrLs();
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Black; }));
                     Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
                 });
                 t.Start();
@@ -173,7 +174,7 @@ namespace CERTified
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, System.EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             notifyIcon1.Visible = false;
             Environment.Exit(0);
@@ -227,29 +228,29 @@ namespace CERTified
             }
             foreach (var cert in _certs)
             {
-                if (cert.isNew)
+                if (cert.IsNew)
                 {
                     for (int a = 0; a < certDataGridView.RowCount; a++)
                     {
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.friendlyname))
+                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Friendlyname))
                         {
                             certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.DarkRed;
                         }
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.simplename))
+                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Simplename))
                         {
                             certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.DarkRed;
                         }
                     }
                 }
-                if (cert.isCA)
+                if (cert.IsCa)
                 {
                     for (int a = 0; a < certDataGridView.RowCount; a++)
                     {
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.friendlyname))
+                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Friendlyname))
                         {
                             certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.Blue;
                         }
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.simplename))
+                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Simplename))
                         {
                             certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.Blue;
                         }
@@ -300,7 +301,7 @@ namespace CERTified
             {
                 CertStruct cert = _certs[e.RowIndex];
                 TreeNode node1;
-                switch (cert.storename)
+                switch (cert.Storename)
                 {
                     case "My":
                         node1 = new TreeNode("Cert Store: Personal");
@@ -324,22 +325,25 @@ namespace CERTified
                         node1 = new TreeNode("Cert Store: Windows Encrypted File System");
                         break;
                     default:
-                        node1 = new TreeNode("Cert Store: " + cert.storename);
+                        node1 = new TreeNode("Cert Store: " + cert.Storename);
                         break;
                 }
-                TreeNode node2 = new TreeNode("Store Location: " + cert.storeloc);
-                TreeNode node3 = new TreeNode("Serial Number: " + cert.serial);
-                TreeNode node4 = new TreeNode("Thumbprint: " + cert.thumbprint);
-                TreeNode node5 = new TreeNode("Algorithm: " + cert.algorithm);
-                TreeNode node6 = new TreeNode("Expires: " + cert.expires);
+                TreeNode node2 = new TreeNode("Store Location: " + cert.Storeloc);
+                TreeNode node3 = new TreeNode("Serial Number: " + cert.Serial);
+                TreeNode node4 = new TreeNode("Thumbprint: " + cert.Thumbprint);
+                TreeNode node5 = new TreeNode("Algorithm: " + cert.Algorithm);
+                TreeNode node6 = new TreeNode("Expires: " + cert.Expires);
                 TreeNode[] array = new TreeNode[] { node1, node2, node3, node4, node5, node6 };
-                if (!String.IsNullOrEmpty(cert.friendlyname))
-                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.friendlyname, array));
+                if (!String.IsNullOrEmpty(cert.Friendlyname))
+                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.Friendlyname, array));
                 else
-                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.simplename, array));
+                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.Simplename, array));
                 certdetailsTreeView.ExpandAll();
             }
-            catch (Exception ex) { ; }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void certDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
@@ -360,7 +364,7 @@ namespace CERTified
 
         private void notifyIcon1_Click(object sender, EventArgs e)
         {
-            if (!this.Visible)
+            if (!Visible)
                 Show();
         }
 
@@ -373,7 +377,7 @@ namespace CERTified
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
 
-            int time = Convert.ToInt32(numericUpDown1.Value);
+            int time = Convert.ToInt32(refreshRateUpDown.Value);
             _usetimer1 = time;
             timer1.Start();
         }

@@ -240,8 +240,11 @@ namespace CERTified
             byte[] data = null;
             try
             {
-                WebClient client = new WebClient();
-                data = client.DownloadData(URL);
+                if (!URL.Equals("http://crl.startcom.org/sfsca-crl.crl"))
+                {
+                    WebClient client = new WebClient();
+                    data = client.DownloadData(URL);
+                }
             }
             catch (Exception e) { Console.WriteLine(@"Error: Could not download {0}. {1}", URL, e.Message); }
             return data;

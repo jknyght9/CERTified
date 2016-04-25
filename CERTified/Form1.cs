@@ -94,11 +94,11 @@ namespace CERTified
             timer1.Stop();
             Thread t = new Thread(() =>
             {
-                this.Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
-                this.Invoke(new MethodInvoker(delegate { formStatus.Text =  @" Updating certificate information... "; }));
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                Invoke(new MethodInvoker(delegate { formStatus.Text =  @" Updating certificate information... "; }));
                 UpdateView();
-                this.Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
-                this.Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
+                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
             });
             t.Start();
             timer1.Start();
@@ -126,11 +126,11 @@ namespace CERTified
             {
                 Thread t = new Thread(() =>
                 {
-                    this.Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
-                    this.Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating certificate information..."; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating certificate information..."; }));
                     UpdateView();
-                    this.Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
-                    this.Invoke(new MethodInvoker(delegate { formStatus.Text = ""; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.Text = ""; }));
                 });
                 t.Start();
                 _usetimer1 = _settimer1;
@@ -149,12 +149,12 @@ namespace CERTified
             {
                 Thread t = new Thread(() =>
                 {
-                    this.Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
-                    this.Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL / CRL... "; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Blue; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL / CRL... "; }));
                     _scc.GetCertVerifier().GetWinCTL();
                     _scc.GetCertVerifier().GetCRLs();
-                    this.Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
-                    this.Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor = System.Drawing.Color.Black; }));
+                    Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
                 });
                 t.Start();
                 _usetimer2 = _settimer2;

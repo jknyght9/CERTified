@@ -36,6 +36,11 @@ namespace CERTified
                 certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
                 certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
                 certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
+                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable; }));
                 formStatus.Text = "";
                 UpdateNew();
             });

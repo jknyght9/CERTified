@@ -56,14 +56,14 @@
             this.certAuthLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label3 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -272,10 +272,6 @@
             this.label2.TabIndex = 12;
             this.label2.Text = "History:";
             // 
-            // certstructBindingSource
-            // 
-            this.certstructBindingSource.DataSource = typeof(CERTified.CertStruct);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -294,7 +290,7 @@
             0,
             0});
             this.numericUpDown1.Minimum = new decimal(new int[] {
-            20,
+            5,
             0,
             0,
             0});
@@ -307,6 +303,10 @@
             0,
             0});
             this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // certstructBindingSource
+            // 
+            this.certstructBindingSource.DataSource = typeof(CERTified.CertStruct);
             // 
             // Form
             // 
@@ -340,8 +340,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.certstructBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

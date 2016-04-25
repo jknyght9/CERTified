@@ -3,7 +3,6 @@ C:\Users\William\Documents\GitHub\CERTified\CERTified\bin\Release\CERTified.exe
 C:\Users\William\Documents\GitHub\CERTified\CERTified\bin\Release\CERTified.pdb
 C:\Users\William\Documents\GitHub\CERTified\CERTified\bin\Release\BouncyCastle.Crypto.dll
 C:\Users\William\Documents\GitHub\CERTified\CERTified\bin\Release\BouncyCastle.Crypto.pdb
-C:\Users\William\Documents\GitHub\CERTified\CERTified\obj\Release\CERTified.csprojResolveAssemblyReference.cache
 C:\Users\William\Documents\GitHub\CERTified\CERTified\obj\Release\CERTified.Form.resources
 C:\Users\William\Documents\GitHub\CERTified\CERTified\obj\Release\CERTified.Properties.Resources.resources
 C:\Users\William\Documents\GitHub\CERTified\CERTified\obj\Release\CERTified.csproj.GenerateResource.Cache

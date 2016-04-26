@@ -18,3 +18,4 @@ C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.Properti
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.csproj.GenerateResource.Cache
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.exe
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.pdb
+C:\Users\William\Documents\GitHub\CERTified\CERTified\obj\Release\CERTified.csprojResolveAssemblyReference.cache

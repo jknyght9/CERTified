@@ -58,6 +58,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.refreshRateUpDown = new System.Windows.Forms.NumericUpDown();
+            this.clearHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
@@ -82,6 +83,7 @@
             this.forceCheckToolStripMenuItem,
             this.forceUpdateToolStripMenuItem,
             this.resetFiltersToolStripMenuItem,
+            this.clearHistoryToolStripMenuItem,
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.operationsToolStripMenuItem.Name = "operationsToolStripMenuItem";
@@ -221,7 +223,7 @@
             // 
             // certdetailsTreeView
             // 
-            this.certdetailsTreeView.Location = new System.Drawing.Point(705, 27);
+            this.certdetailsTreeView.Location = new System.Drawing.Point(718, 27);
             this.certdetailsTreeView.Name = "certdetailsTreeView";
             this.certdetailsTreeView.Size = new System.Drawing.Size(383, 400);
             this.certdetailsTreeView.TabIndex = 8;
@@ -238,7 +240,7 @@
             // 
             this.newCertLabel.AutoSize = true;
             this.newCertLabel.ForeColor = System.Drawing.Color.DarkRed;
-            this.newCertLabel.Location = new System.Drawing.Point(620, 435);
+            this.newCertLabel.Location = new System.Drawing.Point(238, 9);
             this.newCertLabel.Name = "newCertLabel";
             this.newCertLabel.Size = new System.Drawing.Size(79, 13);
             this.newCertLabel.TabIndex = 9;
@@ -248,7 +250,7 @@
             // 
             this.certAuthLabel.AutoSize = true;
             this.certAuthLabel.ForeColor = System.Drawing.Color.Blue;
-            this.certAuthLabel.Location = new System.Drawing.Point(516, 435);
+            this.certAuthLabel.Location = new System.Drawing.Point(134, 9);
             this.certAuthLabel.Name = "certAuthLabel";
             this.certAuthLabel.Size = new System.Drawing.Size(98, 13);
             this.certAuthLabel.TabIndex = 10;
@@ -303,6 +305,13 @@
             0,
             0});
             this.refreshRateUpDown.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // clearHistoryToolStripMenuItem
+            // 
+            this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
+            this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.clearHistoryToolStripMenuItem.Text = "Clear History";
+            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.emptyTreeNode);
             // 
             // certstructBindingSource
             // 
@@ -378,6 +387,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown refreshRateUpDown;
+        private System.Windows.Forms.ToolStripMenuItem clearHistoryToolStripMenuItem;
     }
 }
 

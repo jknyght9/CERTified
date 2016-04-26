@@ -12,8 +12,10 @@ C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\CERTified.exe.conf
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\CERTified.exe
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\CERTified.pdb
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\BouncyCastle.Crypto.dll
+C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\Microsoft.Deployment.Compression.Cab.dll
+C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\Microsoft.Deployment.Compression.dll
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\bin\Release\BouncyCastle.Crypto.pdb
-C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.Form.resources
+C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.mainForm.resources
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.Properties.Resources.resources
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.csproj.GenerateResource.Cache
 C:\Users\jds\Desktop\Projects\CERTified\CERTified\obj\Release\CERTified.exe

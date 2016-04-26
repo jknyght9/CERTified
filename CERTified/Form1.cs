@@ -9,7 +9,7 @@ using Infocyte.CertCheck;
 
 namespace CERTified
 {
-    public partial class mainForm : System.Windows.Forms.Form
+    public partial class MainForm : Form
     {
         private SystemCertCheck _scc;
         private readonly int _settimer2 = 21600;     //for CTL / CRL update (6 hours)
@@ -18,7 +18,7 @@ namespace CERTified
         private readonly List<string> _filter = new List<string>();
         private List<CertStruct> _certs = new List<CertStruct>();
 
-        public mainForm()
+        public MainForm()
         {
             InitializeComponent();
             _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);

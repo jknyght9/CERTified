@@ -48,10 +48,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Deployment.Compression">
-      <HintPath>..\..\..\..\AppData\Local\JetBrains\Installations\dotPeek04\Microsoft.Deployment.Compression.dll</HintPath>
+      <HintPath>lib\Microsoft.Deployment.Compression.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Deployment.Compression.Cab">
-      <HintPath>..\..\..\..\AppData\Local\JetBrains\Installations\dotPeek04\Microsoft.Deployment.Compression.Cab.dll</HintPath>
+      <HintPath>lib\Microsoft.Deployment.Compression.Cab.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -306,7 +306,7 @@
             // 
             // certstructBindingSource
             // 
-            this.certstructBindingSource.DataSource = typeof(CERTified.CertStruct);
+            this.certstructBindingSource.DataSource = typeof(Infocyte.CertCheck.CertStruct);
             // 
             // mainForm
             // 

@@ -47,6 +47,9 @@
       <HintPath>..\packages\BouncyCastle.1.7.0\lib\Net40-Client\BouncyCastle.Crypto.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Infocyte.CertCheck">
+      <HintPath>lib\Infocyte.CertCheck.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Deployment.Compression">
       <HintPath>lib\Microsoft.Deployment.Compression.dll</HintPath>
     </Reference>
@@ -66,8 +69,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CertCheckStructs.cs" />
-    <Compile Include="CertVerifier.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -76,7 +77,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemCertCheck.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

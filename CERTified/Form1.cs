@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 
+using Infocyte.CertCheck;
+
 namespace CERTified
 {
     public partial class mainForm : System.Windows.Forms.Form
@@ -74,16 +76,16 @@ namespace CERTified
                 {
                     switch (flag)
                     {
-                        case Status.Expired:
+                        case Status.EXPIRED:
                             exes[3] = "X";
                             break;
-                        case Status.Incrl:
+                        case Status.INCRL:
                             exes[1] = "X";
                             break;
-                        case Status.Invalid:
+                        case Status.INVALID:
                             exes[2] = "X";
                             break;
-                        case Status.Notctl:
+                        case Status.NOTCTL:
                             exes[0] = "X";
                             break;
                     }

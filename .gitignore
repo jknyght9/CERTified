@@ -1,5 +1,3 @@
-*.exe
-*.cache
-*.pdb
-*.resources
-*.dll
+CERTified/bin/
+CERTified/obj/
+

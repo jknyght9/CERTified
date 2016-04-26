@@ -344,8 +344,12 @@ namespace CERTified
             }
             catch (Exception)
             {
-                // ignored
+                //ignored
             }
+        }
+        private void emptyTreeNode(object sender, EventArgs e)
+        {
+           certdetailsTreeView.Nodes.Clear();
         }
 
         private void certDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)

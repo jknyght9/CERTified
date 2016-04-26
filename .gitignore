@@ -1,0 +1,5 @@
+*.exe
+*.cache
+CERTified/bin/*
+CERTified/obj/*
+*.pdb

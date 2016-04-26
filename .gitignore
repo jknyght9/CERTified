@@ -1,5 +1,5 @@
 *.exe
 *.cache
-CERTified/bin/*
-CERTified/obj/*
 *.pdb
+*.resources
+*.dll

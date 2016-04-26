@@ -347,7 +347,7 @@ namespace CERTified
         }
         private void emptyTreeNode(object sender, EventArgs e)
         {
-            certdetailsTreeView.Nodes.Clear();
+           certdetailsTreeView.Nodes.Clear();
         }
 
         private void certDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)

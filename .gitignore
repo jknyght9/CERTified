@@ -1,4 +1,4 @@
 *.exe
 *.cache
-\CERTified\bin\*
-\CERTified\obj\*
+CERTified/bin/*
+CERTified/obj/*

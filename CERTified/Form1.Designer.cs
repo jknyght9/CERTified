@@ -311,7 +311,7 @@
             this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
             this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.clearHistoryToolStripMenuItem.Text = "Clear History";
-            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.emptyTreeNode);
+            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.EmptyTreeNode);
             // 
             // certstructBindingSource
             // 

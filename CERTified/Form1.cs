@@ -4,7 +4,6 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
-
 using Infocyte.CertCheck;
 
 namespace CERTified
@@ -21,30 +20,10 @@ namespace CERTified
         public MainForm()
         {
             InitializeComponent();
-            _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
+            _usetimer1 = (int)refreshRateUpDown.Value;
             _usetimer2 = _settimer2;
-            Thread t = new Thread(() =>
-            {
-                formStatus.Text = @"Collecting Certificate Trust List and CRLs...";
-                _scc = new SystemCertCheck();
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.DataSource = BuildDataTable(); }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable; }));
-                certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable; }));
-                formStatus.Text = "";
-                UpdateNew();
-            });
+
+            var t = new Thread(CollectLists);
             t.Start();
 
             toolTip1.SetToolTip(ctlCB, "Not on Microsoft Certificate Trust List");
@@ -52,6 +31,125 @@ namespace CERTified
             toolTip1.SetToolTip(invalidCB, "Invalid certificate chain");
             toolTip1.SetToolTip(expiredCB, "Expired certificate");
         }
+
+        #region User Interaction Form Events
+        private void forceCheckToolStripMenuItem_Click(object sender, EventArgs e) {
+            timer1.Stop();
+            var t = new Thread(UpdateCertInfo);
+            t.Start();
+        }
+
+        private void forceUpdateToolStripMenuItem_Click(object sender, EventArgs e) {
+            timer2.Stop();
+            var t = new Thread(UpdateLists);
+            t.Start();
+        }
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+            notifyIcon1.Visible = false;
+            Environment.Exit(0);
+        }
+
+        private void ctl_CheckedChanged(object sender, EventArgs e) {
+            if (ctlCB.Checked)
+                _filter.Add("NoCTL='X'");
+            else
+                _filter.Remove("NoCTL='X'");
+
+            Thread t = new Thread(() => { UpdateView(true); });
+            t.Start();
+        }
+
+        private void crl_CheckedChanged(object sender, EventArgs e) {
+            if (crlCB.Checked)
+                _filter.Add("OnCRL='X'");
+            else
+                _filter.Remove("OnCRL='X'");
+
+            Thread t = new Thread(() => { UpdateView(true); });
+            t.Start();
+        }
+
+        private void invalid_CheckedChanged(object sender, EventArgs e) {
+            if (invalidCB.Checked)
+                _filter.Add("Invalid='X'");
+            else
+                _filter.Remove("Invalid='X'");
+            Thread t = new Thread(() => { UpdateView(true); });
+            t.Start();
+        }
+
+        private void expired_CheckedChanged(object sender, EventArgs e) {
+            if (expiredCB.Checked)
+                _filter.Add("Expired='X'");
+            else
+                _filter.Remove("Expired='X'");
+
+            Thread t = new Thread(() => { UpdateView(true); });
+            t.Start();
+        }
+        private void resetFiltersToolStripMenuItem_Click(object sender, EventArgs e) {
+            ResetFilters();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) {
+            try {
+                CertStruct cert = _certs[e.RowIndex];
+                TreeNode node1;
+                switch (cert.Storename) {
+                    case "My":
+                        node1 = new TreeNode("Cert Store: Personal");
+                        break;
+                    case "AddressBook":
+                        node1 = new TreeNode("Cert Store: Other People");
+                        break;
+                    case "Root":
+                        node1 = new TreeNode("Cert Store: Trusted Root Cert. Authorities");
+                        break;
+                    case "AuthRoot":
+                        node1 = new TreeNode("Cert Store: Third Party Root Cert. Authorities");
+                        break;
+                    case "CA":
+                        node1 = new TreeNode("Cert Store: Intermediate Cert. Authorities");
+                        break;
+                    case "Trust":
+                        node1 = new TreeNode("Cert Store: Enterprise Trust");
+                        break;
+                    case "Efs":
+                        node1 = new TreeNode("Cert Store: Windows Encrypted File System");
+                        break;
+                    default:
+                        node1 = new TreeNode("Cert Store: " + cert.Storename);
+                        break;
+                }
+                TreeNode node2 = new TreeNode("Store Location: " + cert.Storeloc);
+                TreeNode node3 = new TreeNode("Serial Number: " + cert.Serial);
+                TreeNode node4 = new TreeNode("Thumbprint: " + cert.Thumbprint);
+                TreeNode node5 = new TreeNode("Algorithm: " + cert.Algorithm);
+                TreeNode node6 = new TreeNode("Expires: " + cert.Expires);
+                TreeNode[] array = new TreeNode[] { node1, node2, node3, node4, node5, node6 };
+
+                if (!String.IsNullOrEmpty(cert.Friendlyname))
+                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.Friendlyname, array));
+                else
+                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.Simplename, array));
+
+                certdetailsTreeView.ExpandAll();
+            } catch (Exception) {
+                //ignored
+            }
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e) {
+            int time = (int)refreshRateUpDown.Value;
+            _usetimer1 = time;
+            timer1.Start();
+        }
+
+        private void notifyIcon1_Click(object sender, EventArgs e) {
+            if (!Visible)
+                Show();
+        }
+        #endregion
 
         public DataTable BuildDataTable(bool isFiltered = false)
         {
@@ -95,40 +193,6 @@ namespace CERTified
             return dt;
         }
 
-        private void forceCheckToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer1.Stop();
-            Thread t = new Thread(() =>
-            {
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Blue; }));
-                Invoke(new MethodInvoker(delegate { formStatus.Text =  @" Updating certificate information... "; }));
-                UpdateView();
-                _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
-                Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
-                Invoke(new MethodInvoker(delegate { timer1.Start(); }));
-            });
-            t.Start();
-            
-        }
-
-        private void forceUpdateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer2.Stop();
-            Thread t = new Thread(() =>
-            {
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Blue; }));
-                Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL and CRL list..."; }));
-                _scc.GetCertVerifier().GetWinCTL();
-                _scc.GetCertVerifier().GetCrLs();
-                _usetimer2 = _settimer2;
-                Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
-                Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
-                Invoke(new MethodInvoker(delegate { timer2.Start(); }));
-            });
-            t.Start();
-        }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (_usetimer1 > 0)
@@ -138,16 +202,10 @@ namespace CERTified
             }
             else
             {
-                Thread t = new Thread(() =>
-                {
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Blue; }));
-                    Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating certificate information..."; }));
-                    UpdateView();
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Black; }));
-                    Invoke(new MethodInvoker(delegate { formStatus.Text = ""; }));
-                });
+                var t = new Thread(UpdateCertInfo);
                 t.Start();
-                _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
+
+                _usetimer1 = (int)refreshRateUpDown.Value;
                 timer1.Start();
             }
         }
@@ -161,65 +219,55 @@ namespace CERTified
             }
             else
             {
-                Thread t = new Thread(() =>
-                {
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Blue; }));
-                    Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL / CRL... "; }));
-                    _scc.GetCertVerifier().GetWinCTL();
-                    _scc.GetCertVerifier().GetCrLs();
-                    Invoke(new MethodInvoker(delegate { formStatus.ForeColor =  Color.Black; }));
-                    Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
-                });
+                var t = new Thread(UpdateLists);
                 t.Start();
+
                 _usetimer2 = _settimer2;
                 timer2.Start();
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            notifyIcon1.Visible = false;
-            Environment.Exit(0);
+        private void CollectLists() {
+            formStatus.Text = @"Collecting Certificate Trust List and CRLs...";
+            _scc = new SystemCertCheck();
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.DataSource = BuildDataTable(); }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+            certDataGridView.Invoke(new MethodInvoker(delegate { certDataGridView.Columns[4].SortMode = DataGridViewColumnSortMode.NotSortable; }));
+            formStatus.Text = "";
+            UpdateNew();
         }
 
-        private void ctl_CheckedChanged(object sender, EventArgs e)
-        {
-            if (ctlCB.Checked)
-                _filter.Add("NoCTL='X'");
-            else
-                _filter.Remove("NoCTL='X'");
-            Thread t = new Thread(() => { UpdateView(true); });
-            t.Start();
+        private void UpdateCertInfo() {
+            Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Blue; }));
+            Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating certificate information... "; }));
+            UpdateView();
+            _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
+            Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
+            Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
+            Invoke(new MethodInvoker(delegate { timer1.Start(); }));
         }
 
-        private void crl_CheckedChanged(object sender, EventArgs e)
-        {
-            if (crlCB.Checked)
-                _filter.Add("OnCRL='X'");
-            else
-                _filter.Remove("OnCRL='X'");
-            Thread t = new Thread(() => { UpdateView(true); });
-            t.Start();
-        }
-
-        private void invalid_CheckedChanged(object sender, EventArgs e)
-        {
-            if (invalidCB.Checked)
-                _filter.Add("Invalid='X'");
-            else
-                _filter.Remove("Invalid='X'");
-            Thread t = new Thread(() => { UpdateView(true); });
-            t.Start();
-        }
-
-        private void expired_CheckedChanged(object sender, EventArgs e)
-        {
-            if (expiredCB.Checked)
-                _filter.Add("Expired='X'");
-            else
-                _filter.Remove("Expired='X'");
-            Thread t = new Thread(() => { UpdateView(true); });
-            t.Start();
+        private void UpdateLists() {
+            Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Blue; }));
+            Invoke(new MethodInvoker(delegate { formStatus.Text = @" Updating CTL and CRL list..."; }));
+            _scc.GetCertVerifier().GetWinCTL();
+            _scc.GetCertVerifier().GetCrLs();
+            _usetimer2 = _settimer2;
+            Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
+            Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
+            Invoke(new MethodInvoker(delegate { timer2.Start(); }));
         }
 
         private void UpdateNew()
@@ -228,34 +276,26 @@ namespace CERTified
             {
                 certDataGridView.Rows[z].Cells[0].Style.ForeColor = Color.Black;
             }
-            foreach (var cert in _certs)
-            {
-                if (cert.IsNew)
-                {
-                    for (int a = 0; a < certDataGridView.RowCount; a++)
-                    {
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Friendlyname))
-                        {
+            foreach (var cert in _certs) {
+                if (cert.IsNew) {
+                    for (int a = 0; a < certDataGridView.RowCount; a++) {
+                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Friendlyname)) {
                             certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.DarkRed;
                         }
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Simplename))
-                        {
+                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Simplename)) {
                             certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.DarkRed;
                         }
                     }
                 }
-                if (cert.IsCa)
-                {
-                    for (int a = 0; a < certDataGridView.RowCount; a++)
-                    {
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Friendlyname))
-                        {
-                            certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.Blue;
-                        }
-                        if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Simplename))
-                        {
-                            certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.Blue;
-                        }
+                if (!cert.IsCa)
+                    continue;
+
+                for (int a = 0; a < certDataGridView.RowCount; a++) {
+                    if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Friendlyname)) {
+                        certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.Blue;
+                    }
+                    if (certDataGridView.Rows[a].Cells[0].Value.Equals(cert.Simplename)) {
+                        certDataGridView.Rows[a].Cells[0].Style.ForeColor = Color.Blue;
                     }
                 }
             }
@@ -291,63 +331,8 @@ namespace CERTified
             invalidCB.Checked = false;
             expiredCB.Checked = false;
         }
-
-        private void resetFiltersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ResetFilters();
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            try
-            {
-                CertStruct cert = _certs[e.RowIndex];
-                TreeNode node1;
-                switch (cert.Storename)
-                {
-                    case "My":
-                        node1 = new TreeNode("Cert Store: Personal");
-                        break;
-                    case "AddressBook":
-                        node1 = new TreeNode("Cert Store: Other People");
-                        break;
-                    case "Root":
-                        node1 = new TreeNode("Cert Store: Trusted Root Cert. Authorities");
-                        break;
-                    case "AuthRoot":
-                        node1 = new TreeNode("Cert Store: Third Party Root Cert. Authorities");
-                        break;
-                    case "CA":
-                        node1 = new TreeNode("Cert Store: Intermediate Cert. Authorities");
-                        break;
-                    case "Trust":
-                        node1 = new TreeNode("Cert Store: Enterprise Trust");
-                        break;
-                    case "Efs":
-                        node1 = new TreeNode("Cert Store: Windows Encrypted File System");
-                        break;
-                    default:
-                        node1 = new TreeNode("Cert Store: " + cert.Storename);
-                        break;
-                }
-                TreeNode node2 = new TreeNode("Store Location: " + cert.Storeloc);
-                TreeNode node3 = new TreeNode("Serial Number: " + cert.Serial);
-                TreeNode node4 = new TreeNode("Thumbprint: " + cert.Thumbprint);
-                TreeNode node5 = new TreeNode("Algorithm: " + cert.Algorithm);
-                TreeNode node6 = new TreeNode("Expires: " + cert.Expires);
-                TreeNode[] array = new TreeNode[] { node1, node2, node3, node4, node5, node6 };
-                if (!String.IsNullOrEmpty(cert.Friendlyname))
-                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.Friendlyname, array));
-                else
-                    certdetailsTreeView.Nodes.Add(new TreeNode(cert.Simplename, array));
-                certdetailsTreeView.ExpandAll();
-            }
-            catch (Exception)
-            {
-                //ignored
-            }
-        }
-        private void emptyTreeNode(object sender, EventArgs e)
+        
+        private void EmptyTreeNode(object sender, EventArgs e)
         {
            certdetailsTreeView.Nodes.Clear();
         }
@@ -356,6 +341,7 @@ namespace CERTified
         {
             if (!timer1.Enabled)
                 timer1.Enabled = true;
+
             if (!timer2.Enabled)
                 timer2.Enabled = true;
         }
@@ -368,24 +354,10 @@ namespace CERTified
             notifyIcon1.BalloonTipClicked += notifyIcon1_Click;
         }
 
-        private void notifyIcon1_Click(object sender, EventArgs e)
-        {
-            if (!Visible)
-                Show();
-        }
-
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
             Hide();
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-
-            int time = Convert.ToInt32(refreshRateUpDown.Value);
-            _usetimer1 = time;
-            timer1.Start();
         }
     }
 }

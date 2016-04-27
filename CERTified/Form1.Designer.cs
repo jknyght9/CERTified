@@ -53,7 +53,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.nofifyContextMenu = new System.Windows.Forms.ContextMenu();
-            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.exitMenuItem = new System.Windows.Forms.MenuItem();
             this.newCertLabel = new System.Windows.Forms.Label();
             this.certAuthLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -61,7 +61,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.refreshRateUpDown = new System.Windows.Forms.NumericUpDown();
             this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.openMenuItem = new System.Windows.Forms.MenuItem();
             this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
@@ -249,15 +249,15 @@
             // nofifyContextMenu
             // 
             this.nofifyContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem2,
+            this.openMenuItem,
             this.menuItem3,
-            this.menuItem1});
+            this.exitMenuItem});
             // 
-            // menuItem1
+            // exitMenuItem
             // 
-            this.menuItem1.Index = 2;
-            this.menuItem1.Text = "&Exit";
-            this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
+            this.exitMenuItem.Index = 2;
+            this.exitMenuItem.Text = "&Exit";
+            this.exitMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
             // 
             // newCertLabel
             // 
@@ -333,11 +333,11 @@
             // 
             this.certstructBindingSource.DataSource = typeof(Infocyte.CertCheck.CertStruct);
             // 
-            // menuItem2
+            // openMenuItem
             // 
-            this.menuItem2.Index = 0;
-            this.menuItem2.Text = "&Open";
-            this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
+            this.openMenuItem.Index = 0;
+            this.openMenuItem.Text = "&Open";
+            this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
             // 
             // menuItem3
             // 
@@ -415,8 +415,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown refreshRateUpDown;
         private System.Windows.Forms.ToolStripMenuItem clearHistoryToolStripMenuItem;
-        private System.Windows.Forms.MenuItem menuItem1;
-        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem exitMenuItem;
+        private System.Windows.Forms.MenuItem openMenuItem;
         private System.Windows.Forms.MenuItem menuItem3;
     }
 }

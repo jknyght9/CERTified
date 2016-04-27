@@ -33,6 +33,15 @@ namespace CERTified
         }
 
         #region User Interaction Form Events
+        private void exitMenuItem_Click(object sender, EventArgs e) {
+            notifyIcon1.Visible = false;
+            Environment.Exit(0);
+        }
+
+        private void openMenuItem_Click(object sender, EventArgs e) {
+            Visible = true;
+        }
+
         private void forceCheckToolStripMenuItem_Click(object sender, EventArgs e) {
             timer1.Stop();
             var t = new Thread(UpdateCertInfo);
@@ -360,13 +369,5 @@ namespace CERTified
             Hide();
         }
 
-        private void menuItem1_Click(object sender, EventArgs e) {
-            notifyIcon1.Visible = false;
-            Environment.Exit(0);
-        }
-
-        private void menuItem2_Click(object sender, EventArgs e) {
-            Visible = true;
-        }
     }
 }

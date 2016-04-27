@@ -359,5 +359,14 @@ namespace CERTified
             e.Cancel = true;
             Hide();
         }
+
+        private void menuItem1_Click(object sender, EventArgs e) {
+            notifyIcon1.Visible = false;
+            Environment.Exit(0);
+        }
+
+        private void menuItem2_Click(object sender, EventArgs e) {
+            Visible = true;
+        }
     }
 }

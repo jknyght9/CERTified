@@ -35,6 +35,7 @@
             this.forceCheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forceUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetFiltersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.certDataGridView = new System.Windows.Forms.DataGridView();
@@ -52,14 +53,16 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.nofifyContextMenu = new System.Windows.Forms.ContextMenu();
+            this.exitMenuItem = new System.Windows.Forms.MenuItem();
             this.newCertLabel = new System.Windows.Forms.Label();
             this.certAuthLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.refreshRateUpDown = new System.Windows.Forms.NumericUpDown();
-            this.clearHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.openMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -110,6 +113,13 @@
             this.resetFiltersToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.resetFiltersToolStripMenuItem.Text = "Reset Filters";
             this.resetFiltersToolStripMenuItem.Click += new System.EventHandler(this.resetFiltersToolStripMenuItem_Click);
+            // 
+            // clearHistoryToolStripMenuItem
+            // 
+            this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
+            this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.clearHistoryToolStripMenuItem.Text = "Clear History";
+            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.EmptyTreeNode);
             // 
             // toolStripSeparator1
             // 
@@ -236,6 +246,19 @@
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
             // 
+            // nofifyContextMenu
+            // 
+            this.nofifyContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.openMenuItem,
+            this.menuItem3,
+            this.exitMenuItem});
+            // 
+            // exitMenuItem
+            // 
+            this.exitMenuItem.Index = 2;
+            this.exitMenuItem.Text = "&Exit";
+            this.exitMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
+            // 
             // newCertLabel
             // 
             this.newCertLabel.AutoSize = true;
@@ -306,18 +329,22 @@
             0});
             this.refreshRateUpDown.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
-            // clearHistoryToolStripMenuItem
-            // 
-            this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
-            this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.clearHistoryToolStripMenuItem.Text = "Clear History";
-            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.emptyTreeNode);
-            // 
             // certstructBindingSource
             // 
             this.certstructBindingSource.DataSource = typeof(Infocyte.CertCheck.CertStruct);
             // 
-            // mainForm
+            // openMenuItem
+            // 
+            this.openMenuItem.Index = 0;
+            this.openMenuItem.Text = "&Open";
+            this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 1;
+            this.menuItem3.Text = "-";
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -388,6 +415,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown refreshRateUpDown;
         private System.Windows.Forms.ToolStripMenuItem clearHistoryToolStripMenuItem;
+        private System.Windows.Forms.MenuItem exitMenuItem;
+        private System.Windows.Forms.MenuItem openMenuItem;
+        private System.Windows.Forms.MenuItem menuItem3;
     }
 }
 

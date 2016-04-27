@@ -12,6 +12,7 @@ namespace CERTified
     {
         private SystemCertCheck _scc;
         private readonly int _settimer2 = 21600;     //for CTL / CRL update (6 hours)
+        private bool _initalLoad = true;
         private int _usetimer1;
         private int _usetimer2;
         private readonly List<string> _filter = new List<string>();
@@ -357,6 +358,11 @@ namespace CERTified
 
         private void certs_CollectionChanged()
         {
+            if (_initalLoad) { // -- Skip showing the alert the first time the cert stores are loaded.
+                _initalLoad = false;
+                return;
+            }
+
             trayIcon.BalloonTipTitle = @"CERTified";
             trayIcon.BalloonTipText = @"A change in the certificate store has been detected";
             trayIcon.ShowBalloonTip(1000);

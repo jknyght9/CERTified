@@ -96,8 +96,10 @@ namespace CERTified
             Thread t = new Thread(() => { UpdateView(true); });
             t.Start();
         }
+
         private void resetFiltersToolStripMenuItem_Click(object sender, EventArgs e) {
             ResetFilters();
+            UpdateView();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) {

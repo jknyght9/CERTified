@@ -43,16 +43,18 @@
             this.timerStatus1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerStatus2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.formStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.certUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.listUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.ctlCB = new System.Windows.Forms.CheckBox();
             this.crlCB = new System.Windows.Forms.CheckBox();
             this.invalidCB = new System.Windows.Forms.CheckBox();
             this.expiredCB = new System.Windows.Forms.CheckBox();
             this.certdetailsTreeView = new System.Windows.Forms.TreeView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.nofifyContextMenu = new System.Windows.Forms.ContextMenu();
+            this.openMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.exitMenuItem = new System.Windows.Forms.MenuItem();
             this.newCertLabel = new System.Windows.Forms.Label();
             this.certAuthLabel = new System.Windows.Forms.Label();
@@ -61,8 +63,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.refreshRateUpDown = new System.Windows.Forms.NumericUpDown();
             this.certstructBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.openMenuItem = new System.Windows.Forms.MenuItem();
-            this.menuItem3 = new System.Windows.Forms.MenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.certDataGridView)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -177,15 +177,15 @@
             this.formStatus.Name = "formStatus";
             this.formStatus.Size = new System.Drawing.Size(0, 17);
             // 
-            // timer1
+            // certUpdateTimer
             // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.certUpdateTimer.Interval = 1000;
+            this.certUpdateTimer.Tick += new System.EventHandler(this.certUpdateTimer_Tick);
             // 
-            // timer2
+            // listUpdateTimer
             // 
-            this.timer2.Interval = 1000;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.listUpdateTimer.Interval = 1000;
+            this.listUpdateTimer.Tick += new System.EventHandler(this.listUpdateTimer_Tick);
             // 
             // ctlCB
             // 
@@ -238,13 +238,13 @@
             this.certdetailsTreeView.Size = new System.Drawing.Size(383, 400);
             this.certdetailsTreeView.TabIndex = 8;
             // 
-            // notifyIcon1
+            // trayIcon
             // 
-            this.notifyIcon1.ContextMenu = this.nofifyContextMenu;
-            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "CERTified";
-            this.notifyIcon1.Visible = true;
-            this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
+            this.trayIcon.ContextMenu = this.nofifyContextMenu;
+            this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
+            this.trayIcon.Text = "CERTified";
+            this.trayIcon.Visible = true;
+            this.trayIcon.Click += new System.EventHandler(this.trayIcon_Click);
             // 
             // nofifyContextMenu
             // 
@@ -252,6 +252,17 @@
             this.openMenuItem,
             this.menuItem3,
             this.exitMenuItem});
+            // 
+            // openMenuItem
+            // 
+            this.openMenuItem.Index = 0;
+            this.openMenuItem.Text = "&Open";
+            this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 1;
+            this.menuItem3.Text = "-";
             // 
             // exitMenuItem
             // 
@@ -333,17 +344,6 @@
             // 
             this.certstructBindingSource.DataSource = typeof(Infocyte.CertCheck.CertStruct);
             // 
-            // openMenuItem
-            // 
-            this.openMenuItem.Index = 0;
-            this.openMenuItem.Text = "&Open";
-            this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
-            // 
-            // menuItem3
-            // 
-            this.menuItem3.Index = 1;
-            this.menuItem3.Text = "-";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -395,8 +395,8 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel timerStatus1;
         private System.Windows.Forms.ToolStripStatusLabel timerStatus2;
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer certUpdateTimer;
+        private System.Windows.Forms.Timer listUpdateTimer;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.CheckBox ctlCB;
         private System.Windows.Forms.CheckBox crlCB;
@@ -406,7 +406,7 @@
         private System.Windows.Forms.ToolStripMenuItem resetFiltersToolStripMenuItem;
         private System.Windows.Forms.TreeView certdetailsTreeView;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.NotifyIcon trayIcon;
         private System.Windows.Forms.ContextMenu nofifyContextMenu;
         private System.Windows.Forms.Label newCertLabel;
         private System.Windows.Forms.Label certAuthLabel;

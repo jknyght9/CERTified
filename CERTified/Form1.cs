@@ -12,6 +12,7 @@ namespace CERTified
     {
         private SystemCertCheck _scc;
         private readonly int _settimer2 = 21600;     //for CTL / CRL update (6 hours)
+        private bool _initalLoad = true;
         private int _usetimer1;
         private int _usetimer2;
         private readonly List<string> _filter = new List<string>();
@@ -34,7 +35,7 @@ namespace CERTified
 
         #region User Interaction Form Events
         private void exitMenuItem_Click(object sender, EventArgs e) {
-            notifyIcon1.Visible = false;
+            trayIcon.Visible = false;
             Environment.Exit(0);
         }
 
@@ -43,18 +44,18 @@ namespace CERTified
         }
 
         private void forceCheckToolStripMenuItem_Click(object sender, EventArgs e) {
-            timer1.Stop();
+            certUpdateTimer.Stop();
             var t = new Thread(UpdateCertInfo);
             t.Start();
         }
 
         private void forceUpdateToolStripMenuItem_Click(object sender, EventArgs e) {
-            timer2.Stop();
+            listUpdateTimer.Stop();
             var t = new Thread(UpdateLists);
             t.Start();
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
-            notifyIcon1.Visible = false;
+            trayIcon.Visible = false;
             Environment.Exit(0);
         }
 
@@ -153,10 +154,10 @@ namespace CERTified
         private void numericUpDown1_ValueChanged(object sender, EventArgs e) {
             int time = (int)refreshRateUpDown.Value;
             _usetimer1 = time;
-            timer1.Start();
+            certUpdateTimer.Start();
         }
 
-        private void notifyIcon1_Click(object sender, EventArgs e) {
+        private void trayIcon_Click(object sender, EventArgs e) {
             if (!Visible)
                 Show();
         }
@@ -204,7 +205,7 @@ namespace CERTified
             return dt;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void certUpdateTimer_Tick(object sender, EventArgs e)
         {
             if (_usetimer1 > 0)
             {
@@ -217,11 +218,11 @@ namespace CERTified
                 t.Start();
 
                 _usetimer1 = (int)refreshRateUpDown.Value;
-                timer1.Start();
+                certUpdateTimer.Start();
             }
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void listUpdateTimer_Tick(object sender, EventArgs e)
         {
             if (_usetimer2 > 0)
             {
@@ -234,7 +235,7 @@ namespace CERTified
                 t.Start();
 
                 _usetimer2 = _settimer2;
-                timer2.Start();
+                listUpdateTimer.Start();
             }
         }
 
@@ -267,7 +268,7 @@ namespace CERTified
             _usetimer1 = Convert.ToInt32(refreshRateUpDown.Value);
             Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
             Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
-            Invoke(new MethodInvoker(delegate { timer1.Start(); }));
+            Invoke(new MethodInvoker(delegate { certUpdateTimer.Start(); }));
         }
 
         private void UpdateLists() {
@@ -278,7 +279,7 @@ namespace CERTified
             _usetimer2 = _settimer2;
             Invoke(new MethodInvoker(delegate { formStatus.ForeColor = Color.Black; }));
             Invoke(new MethodInvoker(delegate { formStatus.Text = @""; }));
-            Invoke(new MethodInvoker(delegate { timer2.Start(); }));
+            Invoke(new MethodInvoker(delegate { listUpdateTimer.Start(); }));
         }
 
         private void UpdateNew()
@@ -350,19 +351,24 @@ namespace CERTified
 
         private void certDataGridView_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
-            if (!timer1.Enabled)
-                timer1.Enabled = true;
+            if (!certUpdateTimer.Enabled)
+                certUpdateTimer.Enabled = true;
 
-            if (!timer2.Enabled)
-                timer2.Enabled = true;
+            if (!listUpdateTimer.Enabled)
+                listUpdateTimer.Enabled = true;
         }
 
         private void certs_CollectionChanged()
         {
-            notifyIcon1.BalloonTipTitle = @"CERTified";
-            notifyIcon1.BalloonTipText = @"A change in the certificate store has been detected";
-            notifyIcon1.ShowBalloonTip(1000);
-            notifyIcon1.BalloonTipClicked += notifyIcon1_Click;
+            if (_initalLoad) { // -- Skip showing the alert the first time the cert stores are loaded.
+                _initalLoad = false;
+                return;
+            }
+
+            trayIcon.BalloonTipTitle = @"CERTified";
+            trayIcon.BalloonTipText = @"A change in the certificate store has been detected";
+            trayIcon.ShowBalloonTip(1000);
+            trayIcon.BalloonTipClicked += trayIcon_Click;
         }
 
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
@@ -370,6 +376,5 @@ namespace CERTified
             e.Cancel = true;
             Hide();
         }
-
     }
 }
